@@ -1,0 +1,36 @@
+{
+  "name": "@fhevm/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fhevm/sdk": "*",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
+    "@radix-ui/react-slider": "^1.3.6",
+    "@rainbow-me/rainbowkit": "^2.2.11",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@tanstack/react-query": "^5.0.0",
+    "autoprefixer": "^10.5.0",
+    "framer-motion": "^12.38.0",
+    "next": "^15.0.0",
+    "next-themes": "^0.4.6",
+    "postcss": "^8.5.14",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.3.0",
+    "viem": "^2.0.0",
+    "wagmi": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.0.0"
+  }
+}

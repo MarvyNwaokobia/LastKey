@@ -1,0 +1,14 @@
+{
+  "name": "@fhevm/agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx fhevm-agent.ts"
+  },
+  "dependencies": {
+    "@fhevm/sdk": "*",
+    "ethers": "^6.0.0",
+    "dotenv": "^16.0.0"
+  }
+}
