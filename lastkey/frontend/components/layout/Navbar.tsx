@@ -1,17 +1,16 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { motion } from "framer-motion";
 
 export default function Navbar() {
+  const pathname = usePathname();
+
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+    <nav
       className="fixed top-0 inset-x-0 z-50"
       style={{
-        background: "rgba(10,10,15,0.8)",
+        background: "rgba(10,10,15,0.85)",
         backdropFilter: "blur(16px)",
         borderBottom: "1px solid var(--border-subtle)",
       }}
@@ -53,20 +52,25 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className="text-sm transition-colors"
-              style={{ color: "var(--text-secondary)" }}
+              style={{
+                color: pathname === link.href
+                  ? "var(--accent-primary)"
+                  : "var(--text-secondary)",
+                fontWeight: pathname === link.href ? 600 : 400,
+              }}
             >
               {link.label}
             </Link>
           ))}
         </div>
 
-        {/* Wallet */}
+        {/* Wallet — always visible */}
         <ConnectButton
           accountStatus="avatar"
           chainStatus="none"
           showBalance={false}
         />
       </div>
-    </motion.nav>
+    </nav>
   );
 }

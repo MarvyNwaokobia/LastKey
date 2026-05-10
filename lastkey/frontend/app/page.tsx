@@ -1,10 +1,75 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useAccount, useReadContract } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Navbar from "@/components/layout/Navbar";
 import ExplainerCards from "@/components/landing/ExplainerCards";
 import EncryptedDisplay from "@/components/landing/EncryptedDisplay";
 import HowItWorks from "@/components/landing/HowItWorks";
+import { WILL_FACTORY_ADDRESS, WILL_FACTORY_ABI } from "@/lib/contracts";
+
+function HeroCTA() {
+  const { address, isConnected } = useAccount();
+
+  const { data: hasWill } = useReadContract({
+    address: WILL_FACTORY_ADDRESS,
+    abi: WILL_FACTORY_ABI,
+    functionName: "hasWill",
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  if (!isConnected) {
+    return (
+      <div className="flex flex-col sm:flex-row items-center gap-4">
+        <ConnectButton.Custom>
+          {({ openConnectModal }) => (
+            <button
+              onClick={openConnectModal}
+              className="px-6 py-3 rounded-lg text-sm font-semibold text-white transition-all"
+              style={{
+                background: "var(--accent-primary)",
+                boxShadow: "0 0 24px rgba(124,106,247,0.35)",
+              }}
+            >
+              Connect Wallet
+            </button>
+          )}
+        </ConnectButton.Custom>
+        <a
+          href="#how-it-works"
+          className="px-6 py-3 rounded-lg text-sm font-medium transition-colors"
+          style={{ color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}
+        >
+          See How It Works
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center gap-4">
+      <Link
+        href="/dashboard"
+        className="px-6 py-3 rounded-lg text-sm font-semibold text-white transition-all"
+        style={{
+          background: "var(--accent-primary)",
+          boxShadow: "0 0 24px rgba(124,106,247,0.35)",
+        }}
+      >
+        {hasWill ? "View Your Dashboard" : "Create Your Will"}
+      </Link>
+      <a
+        href="#how-it-works"
+        className="px-6 py-3 rounded-lg text-sm font-medium transition-colors"
+        style={{ color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}
+      >
+        See How It Works
+      </a>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   return (
@@ -31,7 +96,7 @@ export default function LandingPage() {
           Powered by Zama FHEVM · Sepolia Testnet
         </motion.div>
 
-        {/* Headline — Playfair Display */}
+        {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,33 +121,14 @@ export default function LandingPage() {
           including us. Until the moment it matters.
         </motion.p>
 
-        {/* CTAs */}
+        {/* CTAs — wallet-aware */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.38 }}
-          className="mt-10 flex flex-col sm:flex-row items-center gap-4"
+          className="mt-10"
         >
-          <Link
-            href="/create"
-            className="px-6 py-3 rounded-lg text-sm font-semibold text-white transition-all"
-            style={{
-              background: "var(--accent-primary)",
-              boxShadow:  "0 0 24px rgba(124,106,247,0.35)",
-            }}
-          >
-            Create Your Will
-          </Link>
-          <a
-            href="#how-it-works"
-            className="px-6 py-3 rounded-lg text-sm font-medium transition-colors"
-            style={{
-              color:   "var(--text-secondary)",
-              border:  "1px solid var(--border-default)",
-            }}
-          >
-            See How It Works
-          </a>
+          <HeroCTA />
         </motion.div>
 
         {/* Trust line */}
@@ -133,16 +179,7 @@ export default function LandingPage() {
           <p className="text-base mb-8" style={{ color: "var(--text-secondary)" }}>
             No paperwork. No lawyers. Just your wallet and an email.
           </p>
-          <Link
-            href="/create"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-sm font-semibold text-white"
-            style={{
-              background: "var(--accent-primary)",
-              boxShadow:  "0 0 32px rgba(124,106,247,0.3)",
-            }}
-          >
-            Create Your Will — Free
-          </Link>
+          <HeroCTA />
           <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>
             No gas required until you add beneficiaries
           </p>

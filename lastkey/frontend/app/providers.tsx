@@ -20,7 +20,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={rkTheme} coolMode>
-          <FhevmProvider>
+          <FhevmProvider
+            provider={
+              process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL ??
+              "https://rpc.sepolia.org"
+            }
+          >
             {children}
           </FhevmProvider>
         </RainbowKitProvider>

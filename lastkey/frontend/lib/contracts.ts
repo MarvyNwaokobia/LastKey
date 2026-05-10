@@ -124,6 +124,41 @@ export const FHE_WILL_ABI = [
   { name: "WillExecuted",    type: "event", inputs: [{ name: "owner", type: "address", indexed: true }, { name: "beneficiaryCount", type: "uint8", indexed: false }] },
 ] as const;
 
+// ─── Minimal ERC-721 ABI (setApprovalForAll) ─────────────────────────────────
+export const ERC721_ABI = [
+  {
+    name: "setApprovalForAll",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "operator", type: "address" },
+      { name: "approved", type: "bool"    },
+    ],
+    outputs: [],
+  },
+] as const;
+
+// ─── Minimal ERC-20 ABI (approve + metadata reads) ───────────────────────────
+export const ERC20_ABI = [
+  {
+    name: "approve",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "spender", type: "address" },
+      { name: "amount",  type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+  },
+  {
+    name: "symbol",
+    type: "function",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "string" }],
+  },
+] as const;
+
 // ─── Will state enum ──────────────────────────────────────────────────────────
 export const WillState = { ACTIVE: 0, CONFIRMING: 1, EXECUTED: 2 } as const;
 
