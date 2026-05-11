@@ -83,57 +83,14 @@ Inside the contract:
 The USDC is now held as **confidential cUSDC (ERC-7984)** inside the bridge. The minted amount has been encrypted before
 any state is written — it is never visible to observers.
 
-### Step 6 — Encrypted Staking (`stake`)
 
-Users can call `stake(encryptedAmount, proof)` to add more USDC to their stake position from their existing balance.
-
-All arithmetic is done in ciphertext:
-
-```solidity
-_encryptedStake[user] = FHE.add(_encryptedStake[user], incoming);
-```
-
-No observer can tell how much was staked.
-
-### Step 7 — Reward Accrual (`accrueRewards`)
-
-The protocol accrues staking rewards on-chain using encrypted multiplication:
-
-```solidity
-euint64 reward = FHE.mul(_encryptedStake[user], safeRate);
-_encryptedRewards[user] = FHE.add(_encryptedRewards[user], reward);
-```
-
-`safeRate` is a public scalar (e.g. 0.1 tokens per block), but the **stake it multiplies is private**. Rewards are
-computed correctly without revealing the underlying balance. Even the protocol cannot determine how much a user has
-earned until they explicitly decrypt.
-
-### Step 8 — Encrypted Unstake (`unstake`)
-
-The user calls `unstake(encryptedRequestedAmount, proof)`. The contract clamps the withdrawal to the actual stake using
-a branch-free FHE conditional:
-
-```solidity
-euint64 actual = FHE.select(
-    FHE.le(requested, _encryptedStake[user]),
-    requested,
-    _encryptedStake[user]
-);
-_encryptedStake[user] = FHE.sub(_encryptedStake[user], actual);
-FHE.makePubliclyDecryptable(actual);
-```
-
-`FHE.select` replaces what would normally be an `if/else` branch. Because the branch condition is never evaluated in
-plaintext, no information about the balance is leaked through execution paths. The KMS callback then transfers the cUSDC
-back to the user via `IERC7984.confidentialTransfer`.
-
-### Step 9 — Optional Decrypt and Reveal (`decryptBalance`)
+### Step 6 — Optional Decrypt and Reveal (`decryptBalance`)
 
 At any time, the user may call `decryptBalance()` to see their own total (stake + rewards). The contract calls
 `FHE.allow(handle, user)` so only that specific user's address can trigger a KMS decryption — the contract owner and
 everyone else remain blind.
 
-### Step 10 — Cross-L2 Bridge-Out (`bridgeOut`)
+### Step 7 — Cross-L2 Bridge-Out (`bridgeOut`)
 
 Users can move their encrypted balance from Base to Arbitrum (or vice versa) by calling
 `bridgeOut(encryptedAmount, proof, destDomain, recipient)`. The flow mirrors the deposit: FHE clamp → KMS callback →
